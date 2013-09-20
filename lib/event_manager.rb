@@ -18,6 +18,25 @@ contents.each do |row|
 
   legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
 
+  legislator_names = legislators.collect do |legislator|
+  "#{legislator.first_name} #{legislator.last_name}"
+
+end
+
+template_letter = File.read "form_letter.html"
+
+contents.each do |row|
+  name = row[:first_name]
+
+  zipcode = clean_zipcode(row[:zipcode])
+
+  legislators = legislators_by_zipcode(zipcode).join(", ")
+
+  personal_letter = template_letter.gsub('FIRST_NAME',name)
+  personal_letter.gsub!('LEGISLATORS',legislators)
+
+  puts personal_letter
+end
   
-  puts "#{name} #{zipcode} #{legislators}"
+  puts "#{name} #{zipcode} #{legislator_names}"
 end
